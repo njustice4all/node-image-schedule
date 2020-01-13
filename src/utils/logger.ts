@@ -1,8 +1,7 @@
 import { NextFunction, Response, Request } from 'express';
-import winston, { format, transports } from 'winston';
+import winston, { format } from 'winston';
 import DailyRotateFile from 'winston-daily-rotate-file';
 import { format as dateFnsFormat } from 'date-fns';
-import multer from 'multer';
 
 function customFormat() {
   return format.printf(info => {
