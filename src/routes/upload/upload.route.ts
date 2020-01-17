@@ -17,6 +17,7 @@ routes.post('/carousel', multer().array('images', 4), uploadCarousel);
 
 routes.post('/reset', imageMiddleware, uploadResetSchedule);
 
-routes.post('/:type', imageMiddleware, uploadCommonImage);
+routes.post('/:type', multer().array('images'), uploadCommonImage);
+// routes.post('/:type', imageMiddleware, uploadCommonImage);
 
 export default routes;
