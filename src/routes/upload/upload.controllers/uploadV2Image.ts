@@ -13,7 +13,7 @@ interface UploadParam {
 }
 
 // TODO: 예외처리
-const uploadCommonImage = async (req: Request, res: Response) => {
+const uploadV2Image = async (req: Request, res: Response) => {
   const { models, email } = req.body;
 
   const jsonModel = JSON.parse(models);
@@ -25,7 +25,7 @@ const uploadCommonImage = async (req: Request, res: Response) => {
         const [results] = jsonModel.filter(value => value.key === file.originalname);
         return new Promise<UploadParam>((resolve, reject) =>
           resolve({
-            Bucket: `${BUCKET}/commonImage`,
+            Bucket: `${BUCKET}/v2`,
             ACL: 'public-read',
             Key: results.fileName,
             Body: file.buffer,
@@ -48,9 +48,9 @@ const uploadCommonImage = async (req: Request, res: Response) => {
 
     s3.upload(
       {
-        Bucket: `${BUCKET}/commonImage`,
+        Bucket: `${BUCKET}/v2`,
         ACL: 'public-read',
-        Key: 'model.json',
+        Key: 'v2model.json',
         Body: Buffer.from(models, 'utf8'),
       },
       (err, data) => {
@@ -66,4 +66,4 @@ const uploadCommonImage = async (req: Request, res: Response) => {
   } catch (error) {}
 };
 
-export default uploadCommonImage;
+export default uploadV2Image;
