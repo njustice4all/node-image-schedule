@@ -15,12 +15,13 @@ interface UploadParam {
 interface IBody {
   email: string;
   delay: string;
+  maxCount: string;
   names: string[];
   images: any[];
 }
 
 const uploadCarousel = async (req: Request, res: Response) => {
-  const { email, delay, names }: IBody = req.body;
+  const { email, delay, maxCount, names }: IBody = req.body;
 
   const images = names.map(data => {
     const { name, url } = JSON.parse(data);
@@ -45,7 +46,7 @@ const uploadCarousel = async (req: Request, res: Response) => {
           Bucket: `${BUCKET}/carousel`,
           ACL: 'public-read',
           Key: 'carousel.json',
-          Body: Buffer.from(JSON.stringify({ email, delay, images }), 'utf8'),
+          Body: Buffer.from(JSON.stringify({ email, delay, maxCount, images }), 'utf8'),
         })
       )
     );
