@@ -13,7 +13,7 @@ const routes = Router();
 
 routes.post('/', imageMiddleware, uploadV2EventBanner);
 
-routes.post('/carousel', multer().array('images', 4), uploadCarousel);
+routes.post('/carousel', multer().array('images'), uploadCarousel);
 
 routes.post('/reset', imageMiddleware, uploadResetSchedule);
 
