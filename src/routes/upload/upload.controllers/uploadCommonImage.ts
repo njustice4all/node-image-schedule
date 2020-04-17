@@ -1,16 +1,10 @@
 import { Request, Response } from 'express';
+import { PutObjectRequest } from 'aws-sdk/clients/s3';
 
 import config from '../../../config';
 import { s3, Logger } from '../../../utils';
 
 const BUCKET = config.BUCKET;
-
-interface UploadParam {
-  Bucket: string;
-  ACL: string;
-  Key: string;
-  Body: Buffer;
-}
 
 // TODO: 예외처리
 const uploadCommonImage = async (req: Request, res: Response) => {
@@ -22,8 +16,8 @@ const uploadCommonImage = async (req: Request, res: Response) => {
     if (req.files) {
       // @ts-ignore: Unreachable code error
       const makeUploadParams = req.files.map((file: Express.Multer.File) => {
-        const [results] = jsonModel.filter(value => value.key === file.originalname);
-        return new Promise<UploadParam>((resolve, reject) =>
+        const [results] = jsonModel.filter((value) => value.key === file.originalname);
+        return new Promise<PutObjectRequest>((resolve, reject) =>
           resolve({
             Bucket: `${BUCKET}/commonImage`,
             ACL: 'public-read',
@@ -32,8 +26,8 @@ const uploadCommonImage = async (req: Request, res: Response) => {
           })
         );
       });
-      const params: UploadParam[] = await Promise.all(makeUploadParams);
-      const uploadPromises = params.map(param => {
+      const params: PutObjectRequest[] = await Promise.all(makeUploadParams);
+      const uploadPromises = params.map((param) => {
         return new Promise<string>((resolve, reject) => {
           s3.upload({ ...param }, (err, data) => {
             if (err) {

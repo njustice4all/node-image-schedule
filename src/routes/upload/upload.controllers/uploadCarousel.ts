@@ -1,16 +1,10 @@
 import { Request, Response } from 'express';
+import { PutObjectRequest } from 'aws-sdk/clients/s3';
 
 import config from '../../../config';
 import { s3 } from '../../../utils';
 
 const BUCKET = config.BUCKET;
-
-interface UploadParam {
-  Bucket: string;
-  ACL: string;
-  Key: string;
-  Body: Buffer;
-}
 
 interface IBody {
   email: string;
@@ -23,7 +17,7 @@ interface IBody {
 const uploadCarousel = async (req: Request, res: Response) => {
   const { email, delay, maxCount, names }: IBody = req.body;
 
-  const images = names.map(data => {
+  const images = names.map((data) => {
     const { name, url } = JSON.parse(data);
     return { name, url };
   });
@@ -31,7 +25,7 @@ const uploadCarousel = async (req: Request, res: Response) => {
   try {
     // @ts-ignore: Unreachable code error
     const makeUploadParams = req.files.map((file: Express.Multer.File) => {
-      return new Promise<UploadParam>((resolve, reject) =>
+      return new Promise<PutObjectRequest>((resolve, reject) =>
         resolve({
           Bucket: `${BUCKET}/carousel`,
           ACL: 'public-read',
@@ -41,7 +35,7 @@ const uploadCarousel = async (req: Request, res: Response) => {
       );
     });
     makeUploadParams.push(
-      new Promise(resolve =>
+      new Promise((resolve) =>
         resolve({
           Bucket: `${BUCKET}/carousel`,
           ACL: 'public-read',
@@ -50,8 +44,8 @@ const uploadCarousel = async (req: Request, res: Response) => {
         })
       )
     );
-    const params: UploadParam[] = await Promise.all(makeUploadParams);
-    const uploadPromises = params.map(param => {
+    const params: PutObjectRequest[] = await Promise.all(makeUploadParams);
+    const uploadPromises = params.map((param) => {
       return new Promise<string>((resolve, reject) => {
         s3.upload({ ...param }, (err, data) => {
           if (err) {

@@ -16,8 +16,7 @@ export const initialize = async () => {
     const eventInfo = await fs.readFile(`${DIR}/eventUrl.json`, 'utf8');
     const { eventDate } = JSON.parse(eventInfo);
 
-    const scheduler = new Scheduler();
-    scheduler.doSchedule(eventDate, initSchedule);
+    Scheduler.doSchedule(eventDate, initSchedule);
   } catch (error) {
     console.error(error);
   }
